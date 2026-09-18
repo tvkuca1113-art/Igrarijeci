@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101923">
+<title>Riječ po riječ — Igra slaganja riječi</title><meta name="description" content="Pronađi riječ među izmiješanim slovima. 60 nivoa na bosanskom, šest etapa i mali izazov za svaki dan.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23101923'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='Arial' font-size='45' font-weight='bold' fill='%23e4f681'%3ER%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css"><script src="game.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#game">Idi na igru</a>
+<header class="site-header"><a class="brand" href="./" aria-label="Riječ po riječ — početna"><span class="brand-mark">r.</span><span>riječ<span class="brand-light"> po </span>riječ<span class="brand-dot">.</span></span></a><span class="header-caption">MALO SLOVA. VELIKI IZAZOV.</span><div class="header-actions"><button class="icon-btn" id="sound" aria-label="Uključi zvuk" aria-pressed="false"><span data-icon="volume"></span></button><button class="quiet-btn" id="help"><span data-icon="help"></span><span>Kako se igra</span></button></div></header>
+<main class="layout">
+<section class="play-column" aria-label="Slaganje riječi">
+<div class="intro"><div><p class="eyebrow"><span class="mini-line"></span> IGRA RIJEČI NA BOSANSKOM</p><h1>Jedna riječ.<br><span>Bezbroj klikova u glavi.</span></h1></div><div class="intro-badge"><span data-icon="sparkles"></span><span>Bez žurbe.<br>Samo tvoj ritam.</span></div></div>
+<section class="game-card" id="game" tabindex="-1" aria-label="Trenutni nivo">
+<div class="game-top"><div class="level-tag"><span class="level-dot"></span><span id="level-label">NIVO 01</span></div><span id="difficulty" class="difficulty">Zagrijavanje</span><div class="round-stars" id="round-stars" aria-label="Moguće zvjezdice: 3">★ ★ ★</div></div>
+<div class="game-heading"><p id="category" class="category">PRIRODA</p><h2 id="question">Koju riječ tražimo?</h2><p id="clue" class="clue"></p></div>
+<div id="answer" class="tile-row answer-row" role="group" aria-label="Tvoja riječ"></div>
+<div class="message" id="message" role="status" aria-live="polite"></div>
+<div id="letters" class="tile-row letter-row" role="group" aria-label="Ponuđena slova"></div>
+<p class="tap-tip" id="tap-tip">Dodirni slova i složi riječ.</p>
+<div class="game-tools"><button class="tool-btn" id="shuffle"><span data-icon="shuffle"></span><span>Izmiješaj</span></button><button class="tool-btn" id="undo"><span data-icon="undo"></span><span>Vrati slovo</span></button><button class="tool-btn hint-btn" id="hint"><span data-icon="bulb"></span><span>Otkrij slovo</span><span class="hint-cost">− ★</span></button></div>
+<div id="success" class="success" hidden><div><span class="success-kicker" id="success-kicker">ODLIČNO SLOŽENO!</span><h3 id="success-title">To je ta riječ.</h3><p id="reward"></p></div><button class="primary-btn" id="next">Sljedeći nivo <span data-icon="arrow"></span></button></div>
+<div class="game-bottom"><span><span data-icon="keyboard"></span> Možeš koristiti i tastaturu</span><span id="word-length"></span></div>
+</section>
+<div class="under-game"><span><span data-icon="shield"></span> Nema odbrojavanja. Nema izgubljenih života.</span><span id="save-status"><span data-icon="check"></span> Napredak se čuva na ovom uređaju</span></div>
+</section>
+<aside class="journey" aria-label="Tvoj napredak"><div class="journey-title"><h2>Tvoj put</h2><span class="small-pill">60 nivoa</span></div><div class="stats"><div><span class="stat-icon lime"><span data-icon="star"></span></span><div><strong id="total-stars">0</strong><span>zvjezdica</span></div></div><div><span class="stat-icon teal"><span data-icon="bolt"></span></span><div><strong id="total-points">0</strong><span>bodova</span></div></div></div><div class="progress-label"><span>Ukupni napredak</span><strong id="progress-label">0 / 60</strong></div><progress id="progress" max="60" value="0">0 / 60</progress><div id="chapters" class="chapters"></div><button id="levels" class="all-levels">Pogledaj sve nivoe <span data-icon="grid"></span></button><div class="journey-note"><span data-icon="bulb"></span><p>Ponekad je dovoljan novi pogled.<br><strong>Izmiješaj slova i probaj ponovo.</strong></p></div></aside>
+</main>
+<footer><span>riječ po riječ<span class="brand-dot">.</span></span><span>Složeno za radoznale umove.</span><span>60 riječi. Koliko ih ti možeš složiti?</span></footer>
+<dialog id="help-dialog"><div class="modal-head"><span class="eyebrow">BRZI VODIČ</span><button class="icon-btn close-dialog" aria-label="Zatvori"><span data-icon="close"></span></button></div><h2>Slovo po slovo.<br>I riječ je tu.</h2><ol class="instructions"><li><span>01</span><div><strong>Pronađi riječ iz traga</strong><p>Dodirni ponuđena slova redom. Svako slovo možeš koristiti jednom. LJ, NJ i DŽ zauzimaju po jedno polje.</p></div></li><li><span>02</span><div><strong>Slobodno isprobavaj</strong><p>Dodirni odabrano slovo da ga vratiš. „Izmiješaj“ daje novi raspored. Nema vremenskog ograničenja.</p></div></li><li><span>03</span><div><strong>Osvoji do tri zvjezdice</strong><p>Bez pomoći: 3 ★ i 150 bodova. Jedno otkriveno slovo: 2 ★ i 100 bodova. Više pomoći: 1 ★ i 50 bodova. Pogrešni pokušaji ne oduzimaju bodove.</p></div></li></ol><div class="keyboard-help"><strong>Igraš tastaturom?</strong><p>Slova za unos · Backspace za vraćanje · Escape za brisanje slobodnih slova. Koristi Č, Ć, Š, Đ i Ž kada ih riječ sadrži. Za LJ, NJ i DŽ upiši oba znaka redom.</p></div><p class="local-note">Napredak se čuva u ovom pregledniku. Brisanjem podataka preglednika briše se i napredak. Riješi ponovo bilo koji završeni nivo i popravi svoj rezultat.</p><button class="primary-btn full close-dialog">Idemo slagati <span data-icon="arrow"></span></button></dialog>
+<dialog id="levels-dialog"><div class="modal-head"><span class="eyebrow">TVOJA AVANTURA</span><button class="icon-btn close-dialog" aria-label="Zatvori"><span data-icon="close"></span></button></div><h2>Svaka riječ je korak dalje.</h2><p class="modal-subtitle">Riješi nivo da otključaš sljedeći. Završene možeš ponoviti.</p><div id="level-grid"></div></dialog>
+</body></html>
