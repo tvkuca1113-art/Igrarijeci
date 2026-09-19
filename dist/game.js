@@ -131,7 +131,7 @@ function render() {
   $('question').textContent = !r ? 'Spreman za izazov?' : 'Koju riječ tražimo?';
   $('clue').textContent = r ? v.clue : '';
   $('clue').hidden = !r;
-  $('ready-copy').textContent = v.mode === 'easy' ? 'Tri zvjezdice. Bez odbrojavanja. Trag i besplatna početna slova.' : 'Tri zvjezdice. ' + v.config.seconds + (v.config.seconds === 24 ? ' sekunde.' : ' sekundi.') + ' Početna slova su besplatna. Sat kreće na tvoj znak.';
+  $('ready-copy').textContent = v.mode === 'easy' ? 'Tri zvjezdice. Bez odbrojavanja. Jasniji opis kao trag.' : 'Tri zvjezdice. ' + v.config.seconds + (v.config.seconds === 24 ? ' sekunde.' : ' sekundi.') + ' Opis ti pomaže. Sat kreće na tvoj znak.';
   $('start').innerHTML = 'Pokreni nivo' + (v.config.seconds ? ' · ' + v.config.seconds + ' s' : '') + ' ' + icon('arrow');
   $('game').classList.toggle('solved', phase === 'won');
   $('game').classList.toggle('lost', phase === 'lost');

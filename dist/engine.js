@@ -81,7 +81,17 @@
             p.current = int(source.current, 0, Math.min(Object.keys(p.results).length, 59)) ? source.current : 0;
             p.attempts = int(source.attempts, 0, 1000000) ? source.attempts : 0;
             p.seen = Array.isArray(source.seen) ? source.seen.filter(w => byWord.has(w)).slice(-WORDS.length) : [];
-            if (validRound(source.round, mode, p)) p.round = source.round;
+            if (validRound(source.round, mode, p)) {
+              p.round = source.round;
+              // Remove automatic letters from unfinished saved attempts, keeping paid hints and the clock.
+              if (p.round.phase === 'playing' && p.round.freeHints > 0) {
+                const count = p.round.freeHints;
+                for (let i = 0; i < count; i++) p.round.slots[i] = null;
+                p.round.fixed = p.round.fixed.filter(i => i >= count);
+                p.round.freeHints = 0;
+                p.round.message = '';
+              }
+            }
           }
         } else if (!raw) {
           // Preserve the original, untimed progress under Lahko; do not modify the v1 backup.
@@ -139,15 +149,10 @@
       let arrangement = shuffle(parts, this.random);
       if (arrangement.join('') === chosen.word) arrangement = [...parts.slice(1), parts[0]];
       p.attempts++;
-      p.round = { level: p.current, word: chosen.word, phase: 'playing', lives: 3, hints: 0, mistakes: 0, freeHints: Math.max(1, Math.round(parts.length * .2)),
+      p.round = { level: p.current, word: chosen.word, phase: 'playing', lives: 3, hints: 0, mistakes: 0, freeHints: 0,
         tiles: arrangement.map((text, id) => ({ text, id })), slots: Array(parts.length).fill(null), fixed: [],
         deadline: this.config.seconds ? this.now() + this.config.seconds * 1000 : null,
-        reason: null, message: 'Početna slova su otkrivena besplatno.', earned: 0, remainingMs: null };
-      for (let i = 0; i < p.round.freeHints; i++) {
-        const tile = p.round.tiles.find(t => t.text === parts[i] && !p.round.slots.includes(t.id));
-        p.round.slots[i] = tile.id;
-        p.round.fixed.push(i);
-      }
+        reason: null, message: '', earned: 0, remainingMs: null };
       this.save();
       return true;
     }

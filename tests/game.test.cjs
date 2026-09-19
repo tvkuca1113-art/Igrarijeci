@@ -90,7 +90,8 @@ test('every mode can finish all 60 levels and the final level cannot overflow', 
   for (const mode of Object.keys(MODES)) {
     const { game: g } = setup(mode); g.begin();
     for (let i = 0; i < 60; i++) {
-      assert.equal(g.round.freeHints, Math.max(1, Math.round(splitWord(g.round.word).length * .2)));
+      assert.equal(g.round.freeHints, 0);
+      assert(g.round.slots.every(id => id === null));
       assert.equal(g.round.fixed.length, g.round.freeHints);
       assert.equal(g.round.lives, 3); assert.equal(g.round.hints, 0);
       assert.equal(g.current, i); assert.equal(g.setLevel(i + 1), false);
@@ -146,13 +147,24 @@ test('all word digraphs and repeated letters can be consumed exactly once', () =
   assert.deepEqual(splitWord('KNJIŽEVNOST'), ['K', 'NJ', 'I', 'Ž', 'E', 'V', 'N', 'O', 'S', 'T']);
   assert.deepEqual(splitWord('DŽEMPER'), ['DŽ', 'E', 'M', 'P', 'E', 'R']);
 });
-test('free starting letters survive editing and refresh without spending stars', () => {
+test('unfinished saved attempts remove automatic letters but preserve paid hints and deadline', () => {
   const t = setup(), g = t.game; g.begin();
-  const slots = [...g.round.slots];
-  for (const i of g.round.fixed) assert.equal(g.remove(i), false);
-  g.clear(); g.undo(); g.shuffle();
-  assert.deepEqual(g.round.slots, slots); assert.equal(g.round.lives, 3); assert.equal(g.round.hints, 0);
-  assert.deepEqual(t.reload().round, g.round);
+  const r = g.round, target = splitWord(r.word);
+  r.freeHints = Math.max(1, Math.round(target.length * .2));
+  for (let i = 0; i < r.freeHints; i++) {
+    r.slots[i] = r.tiles.find(tile => tile.text === target[i] && !r.slots.includes(tile.id)).id;
+    r.fixed.push(i);
+  }
+  g.hint();
+  const count = r.freeHints, paid = r.fixed.at(-1), deadline = r.deadline, word = r.word;
+  const restored = t.reload();
+  assert.equal(restored.round.freeHints, 0);
+  assert.deepEqual(restored.round.fixed, [paid]);
+  assert(restored.round.slots.slice(0, count).every(id => id === null));
+  assert.equal(restored.round.lives, 2); assert.equal(restored.round.hints, 1);
+  assert.equal(restored.round.deadline, deadline); assert.equal(restored.round.word, word);
+  assert.equal(restored.remove(paid), false);
+  solve(restored); assert.equal(restored.round.phase, 'won');
 });
 test('previous saved rounds without free letters retain progress and deadline', () => {
   const t = setup(); t.game.begin();

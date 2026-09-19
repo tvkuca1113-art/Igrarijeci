@@ -10,7 +10,7 @@ Igra slaganja riječi na bosanskom: 240 riječi, tri težine i 60 nivoa po teži
 | Srednje | 24 sekunde | Jasniji trag i oblast | 100 |
 | Teško | 12 sekundi | Kratak trag, teže riječi | 150 |
 
-- Na svakom nivou oko 20% slova (zaokruženo na cijelo polje) otkriveno je besplatno; dodatna pomoć i dalje troši zvjezdicu. Lahko i srednje imaju opisnije tragove, a teško kratak trag.
+- Svaki novi pokušaj počinje praznim poljima. Slovo se otkriva samo na zahtjev i troši zvjezdicu. Lahko i srednje imaju opisnije tragove, a teško kratak trag.
 - Svaki pokušaj počinje s tri zvjezdice.
 - Potpuno složena pogrešna riječ i otkrivanje slova troše po jednu zvjezdicu. Vraćanje i miješanje slova su besplatni.
 - Nula zvjezdica ili istek vremena znači poraz. Otkrivanje slova s posljednjom zvjezdicom također završava pokušaj.
