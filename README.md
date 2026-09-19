@@ -1,19 +1,44 @@
 # Riječ po riječ
 
-Igra slaganja riječi na bosanskom: 60 nivoa u šest etapa, tragovi, pomoć, bodovi, zvjezdice i napredak sačuvan u pregledniku.
+Igra slaganja riječi na bosanskom: 240 riječi, tri težine i 60 nivoa po težini. Prilagođena dodiru i tastaturi.
 
-## Pokretanje
+## Nova pravila
 
-Otvori `dist/index.html` u pregledniku ili posluži direktorij `dist` lokalnim HTTP serverom. Nisu potrebne zavisnosti, API ključevi ni baza podataka.
+| Težina | Vrijeme po pokušaju | Trag | Bodovi po preostaloj ★ |
+| --- | --- | --- | --- |
+| Lahko | Bez ograničenja | Kratak trag i oblast | 50 |
+| Srednje | 20 sekundi | Samo oblast | 100 |
+| Teško | 10 sekundi | Bez traga, teže riječi | 150 |
+
+- Svaki pokušaj počinje s tri zvjezdice.
+- Potpuno složena pogrešna riječ i otkrivanje slova troše po jednu zvjezdicu. Vraćanje i miješanje slova su besplatni.
+- Nula zvjezdica ili istek vremena znači poraz. Otkrivanje slova s posljednjom zvjezdicom također završava pokušaj.
+- Ponovni pokušaj zadržava isti nivo, daje drugu riječ, tri nove zvjezdice i puno vrijeme.
+- Riječi se izvlače bez ponavljanja unutar fonda težine dok se fond ne iscrpi. Uzastopni pokušaji nikada ne dobijaju istu riječ.
+- Sat kreće tek pritiskom na „Pokreni nivo“. Riječ se do tada ne prikazuje.
+- Odbrojavanje se ne zaustavlja u pomoći, drugoj kartici, pri promjeni težine ili nakon osvježavanja stranice. Rok završetka pokušaja čuva se lokalno.
+- Rezultati i otključani nivoi odvojeni su po težini. Ponovljeni nivo može poboljšati rezultat; bodovi se ne mogu skupljati ponovnim rješavanjem istog nivoa.
+- Napredak prethodne verzije migrira se pod Lahko. Izvorni zapis ostaje netaknut kao rezervna kopija.
+- LJ, NJ i DŽ zauzimaju jedno polje. Za tastaturu upiši oba znaka; Enter potvrđuje samostalno D, L ili N kada se čeka drugi znak.
+
+## Pokretanje i provjera
+
+Otvori `dist/index.html` u pregledniku ili posluži direktorij `dist` lokalnim HTTP serverom. Nisu potrebni paketi, API ključevi niti baza podataka.
+
+Za provjeru pravila igre, uz Node.js 20 ili noviji:
+
+```sh
+node --test tests/game.test.cjs
+```
+
+`dist/words.js` sadrži fond riječi, `dist/engine.js` pravila i stanje, a `dist/game.js` prikaz i interakcije.
 
 ## Vercel
 
-Uvezi ovaj repozitorij kao novi projekt. `vercel.json` postavlja statički izlazni direktorij na `dist`; instalacija i build nisu potrebni. Produkcijska grana: `main`.
+Uvezi ovaj repozitorij kao novi projekt. `vercel.json` postavlja statički izlazni direktorij na `dist`; instalacija i build nisu potrebni. Produkcijska grana je `main`. Povezani Vercel projekt automatski objavljuje promjene poslane na `main`.
 
-Nakon povezivanja Vercel automatski objavljuje izmjene poslane na `main`.
+## Lokalni podaci
 
-## Podaci
+Napredak je vezan za preglednik i domenu. Brisanje podataka preglednika uklanja napredak; druga domena ne preuzima podatke automatski. Igra radi i kada preglednik zabrani čuvanje, uz obavijest da se napredak neće sačuvati.
 
-Napredak se čuva lokalno, na istom uređaju i u istom pregledniku. Prelazak na novu domenu ne prenosi napredak s prethodne domene.
-
-Fontovi se učitavaju preko Google Fonts; sistemski fontovi koriste se kada servis nije dostupan.
+Google Fonts ima sistemske zamjenske fontove ako nije dostupan. Zvuk je isključen dok ga igrač ne uključi.
