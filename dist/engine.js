@@ -6,8 +6,8 @@
   const KEY = 'rijec-po-rijec-v2';
   const MODES = {
     easy: { label: 'Lahko', seconds: null, multiplier: 1, bands: [0, 0, 1, 1, 2, 2] },
-    medium: { label: 'Srednje', seconds: 20, multiplier: 2, bands: [1, 1, 2, 2, 3, 3] },
-    hard: { label: 'Teško', seconds: 10, multiplier: 3, bands: [2, 2, 3, 3, 4, 4] }
+    medium: { label: 'Srednje', seconds: 24, multiplier: 2, bands: [1, 1, 2, 2, 3, 3] },
+    hard: { label: 'Teško', seconds: 12, multiplier: 3, bands: [2, 2, 3, 3, 4, 4] }
   };
   const splitWord = word => word.match(/DŽ|LJ|NJ|./gu);
   const byWord = new Map(WORDS.map(word => [word.word, word]));
@@ -35,7 +35,8 @@
     if (used.some(id => !int(id, 0, n - 1)) || new Set(used).size !== used.length) return false;
     if (new Set(r.fixed).size !== r.fixed.length || r.fixed.some(i => !int(i, 0, n - 1) || r.slots[i] === null || r.tiles.find(t => t.id === r.slots[i]).text !== target[i])) return false;
     if (!int(r.lives, 0, 3) || !int(r.mistakes, 0, 3) || !int(r.hints, 0, 3) || r.mistakes + r.hints + r.lives !== 3) return false;
-    if (r.fixed.length !== r.hints - (r.phase === 'lost' && r.reason === 'hint' ? 1 : 0)) return false;
+    if (!int(r.freeHints ?? 0, 0, Math.max(1, Math.round(n * .2)))) return false;
+    if (r.fixed.length !== (r.freeHints ?? 0) + r.hints - (r.phase === 'lost' && r.reason === 'hint' ? 1 : 0)) return false;
     if (MODES[mode].seconds ? !Number.isFinite(r.deadline) || r.deadline <= 0 : r.deadline !== null) return false;
     if (r.phase === 'playing' && r.lives === 0) return false;
     if (r.phase === 'won' && (r.lives === 0 || r.slots.some(id => id === null) || r.slots.map(id => r.tiles.find(t => t.id === id).text).join('') !== r.word || !p.results[r.level])) return false;
@@ -138,10 +139,15 @@
       let arrangement = shuffle(parts, this.random);
       if (arrangement.join('') === chosen.word) arrangement = [...parts.slice(1), parts[0]];
       p.attempts++;
-      p.round = { level: p.current, word: chosen.word, phase: 'playing', lives: 3, hints: 0, mistakes: 0,
+      p.round = { level: p.current, word: chosen.word, phase: 'playing', lives: 3, hints: 0, mistakes: 0, freeHints: Math.max(1, Math.round(parts.length * .2)),
         tiles: arrangement.map((text, id) => ({ text, id })), slots: Array(parts.length).fill(null), fixed: [],
         deadline: this.config.seconds ? this.now() + this.config.seconds * 1000 : null,
-        reason: null, message: '', earned: 0, remainingMs: null };
+        reason: null, message: 'Početna slova su otkrivena besplatno.', earned: 0, remainingMs: null };
+      for (let i = 0; i < p.round.freeHints; i++) {
+        const tile = p.round.tiles.find(t => t.text === parts[i] && !p.round.slots.includes(t.id));
+        p.round.slots[i] = tile.id;
+        p.round.fixed.push(i);
+      }
       this.save();
       return true;
     }
@@ -251,7 +257,7 @@
       this.tick();
       const r = this.round, entry = r && byWord.get(r.word);
       return { mode: this.mode, config: this.config, current: this.current, unlocked: this.unlocked,
-        round: r, category: entry?.category || '', clue: entry?.clue || '', remaining: this.remaining(),
+        round: r, category: entry?.category || '', clue: (this.mode === 'hard' ? entry?.clue : entry?.description) || '', remaining: this.remaining(),
         results: this.progress.results, totalStars: Object.values(this.progress.results).reduce((a, x) => a + x.stars, 0),
         totalPoints: Object.values(this.progress.results).reduce((a, x) => a + x.points, 0) };
     }

@@ -14,15 +14,15 @@
 <div class="intro"><div><p class="eyebrow"><span class="mini-line"></span> IGRA RIJEČI NA BOSANSKOM</p><h1>Jedna riječ.<br><span>Tri zvjezdice. Tvoj izazov.</span></h1></div><div class="intro-badge"><span data-icon="sparkles"></span><span>Svaki pokušaj.<br>Nova prilika.</span></div></div>
 <div class="mode-selector" role="group" aria-label="Težina igre">
 <button class="mode-option" data-mode="easy" aria-pressed="false"><strong>Lahko</strong><span>Bez vremena · kratak trag</span></button>
-<button class="mode-option" data-mode="medium" aria-pressed="true"><strong>Srednje <b>20 s</b></strong><span>Samo oblast riječi</span></button>
-<button class="mode-option" data-mode="hard" aria-pressed="false"><strong>Teško <b>10 s</b></strong><span>Teže riječi · bez traga</span></button>
+<button class="mode-option" data-mode="medium" aria-pressed="true"><strong>Srednje <b>24 s</b></strong><span>Oblast i jasniji trag</span></button>
+<button class="mode-option" data-mode="hard" aria-pressed="false"><strong>Teško <b>12 s</b></strong><span>Teže riječi · kratak trag</span></button>
 </div>
 <p class="mode-note" id="mode-note">Napredak se čuva zasebno za svaku težinu.</p>
 <section class="game-card" id="game" tabindex="-1" aria-label="Trenutni nivo">
 <div class="game-top"><div class="level-tag"><span class="level-dot"></span><span id="level-label">NIVO 01</span></div><span id="difficulty" class="difficulty">Zagrijavanje</span><div class="round-stars" id="round-stars" aria-label="Preostale zvjezdice: 3">★ ★ ★</div></div>
-<div id="clock" class="clock" hidden><div class="clock-label"><span>Preostalo vrijeme</span><strong id="clock-value" role="timer" aria-live="off">20 s</strong></div><progress id="clock-progress" max="20" value="20" aria-label="Preostalo vrijeme"></progress></div>
+<div id="clock" class="clock" hidden><div class="clock-label"><span>Preostalo vrijeme</span><strong id="clock-value" role="timer" aria-live="off">24 s</strong></div><progress id="clock-progress" max="24" value="24" aria-label="Preostalo vrijeme"></progress></div>
 <div class="game-heading"><p id="category" class="category">PRIRODA</p><h2 id="question">Koju riječ tražimo?</h2><p id="clue" class="clue"></p></div>
-<div class="ready-panel" id="ready-panel"><p id="ready-copy">3 zvjezdice. 20 sekundi. Jesi li spreman?</p><button class="primary-btn" id="start">Pokreni nivo <span data-icon="arrow"></span></button></div>
+<div class="ready-panel" id="ready-panel"><p id="ready-copy">3 zvjezdice. 24 sekunde. Jesi li spreman?</p><button class="primary-btn" id="start">Pokreni nivo <span data-icon="arrow"></span></button></div>
 <div id="board" hidden>
 <div id="answer" class="tile-row answer-row" role="group" aria-label="Tvoja riječ"></div>
 <div class="message" id="message" role="status" aria-live="polite"></div>
@@ -41,7 +41,7 @@
 </main>
 <footer><span>riječ po riječ<span class="brand-dot">.</span></span><span>Složeno za radoznale umove.</span><span>240 riječi. Tri težine. Novi pokušaj, nova riječ.</span></footer>
 <dialog id="help-dialog"><div class="modal-head"><span class="eyebrow">BRZI VODIČ</span><button class="icon-btn close-dialog" aria-label="Zatvori"><span data-icon="close"></span></button></div><h2>Slovo po slovo.<br>I riječ je tu.</h2><ol class="instructions">
-<li><span>01</span><div><strong>Odaberi svoj izazov</strong><p>Lahko: bez odbrojavanja i uz kratak trag. Srednje: 20 sekundi i samo oblast. Teško: 10 sekundi, zahtjevnije riječi i bez traga. Vrijeme kreće tek kada pritisneš „Pokreni nivo“.</p></div></li>
+<li><span>01</span><div><strong>Odaberi svoj izazov</strong><p>Lahko: bez odbrojavanja i uz kratak trag. Srednje: 24 sekunde i jasniji trag. Teško: 12 sekundi, zahtjevnije riječi i kratak trag. Na svakom nivou oko 20% početnih slova dobijaš besplatno. Vrijeme kreće tek kada pritisneš „Pokreni nivo“.</p></div></li>
 <li><span>02</span><div><strong>Čuvaj tri zvjezdice</strong><p>Svaka potpuno složena pogrešna riječ troši jednu ★. Otkrivanje slova također troši jednu ★. Kada potrošiš sve tri ili vrijeme istekne, gubiš pokušaj. Ako imaš samo jednu ★, korištenje pomoći znači poraz.</p></div></li>
 <li><span>03</span><div><strong>Isti nivo, druga riječ</strong><p>Nakon poraza ponavljaš isti nivo s drugom riječju i tri nove ★. Za tačan odgovor osvajaš 50 bodova po preostaloj ★ na lahkoj, 100 na srednjoj i 150 na teškoj težini. Čuva se najbolji rezultat nivoa, zasebno za svaku težinu.</p></div></li>
 </ol><div class="keyboard-help"><strong>Igraš tastaturom?</strong><p>Slova za unos · Backspace za vraćanje · Escape za brisanje slobodnih slova. Koristi Č, Ć, Š, Đ i Ž kada ih riječ sadrži. LJ, NJ i DŽ zauzimaju po jedno polje; upiši oba znaka redom. Enter potvrđuje samostalno D, L ili N ako čekaš drugi znak.</p></div><p class="local-note">Vrijeme teče i kada otvoriš pomoć, promijeniš težinu, napustiš karticu ili osvježiš stranicu. Napredak se čuva u ovom pregledniku. Rezultati iz stare verzije sačuvani su pod „Lahko“.</p><button class="primary-btn full close-dialog">Idemo slagati <span data-icon="arrow"></span></button></dialog>

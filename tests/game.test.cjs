@@ -42,7 +42,7 @@ test('240 unique words, valid Bosnian letters, five populated pools and touch-fr
   }
   for (let band = 0; band < 5; band++) assert.equal(WORDS.filter(w => w.band === band).length, 48);
 });
-test('clock starts only on explicit begin; medium 20 seconds, hard 10, easy untimed', () => {
+test('clock starts only on explicit begin; medium 24 seconds, hard 12, easy untimed', () => {
   for (const mode of Object.keys(MODES)) {
     const t = setup(mode); t.advance(60000); assert.equal(t.game.round, null);
     t.game.begin(); assert.equal(t.game.remaining(), MODES[mode].seconds ? MODES[mode].seconds * 1000 : null);
@@ -57,10 +57,10 @@ test('three wrong complete answers fail, preserve level, award nothing, retry ch
   g.begin(); assert.notEqual(g.round.word, first); assert.equal(g.current, 0); assert.equal(g.round.lives, 3);
 });
 test('every hint costs a star, spending the last one loses before revealing a free solution', () => {
-  const { game: g } = setup(); g.begin(); g.hint(); assert.equal(g.round.lives, 2); assert.equal(g.round.fixed.length, 1);
-  g.hint(); assert.equal(g.round.lives, 1); assert.equal(g.round.fixed.length, 2);
+  const { game: g } = setup(); g.begin(); g.hint(); assert.equal(g.round.lives, 2); assert.equal(g.round.fixed.length, g.round.freeHints + 1);
+  g.hint(); assert.equal(g.round.lives, 1); assert.equal(g.round.fixed.length, g.round.freeHints + 2);
   g.hint(); assert.equal(g.round.lives, 0); assert.equal(g.round.phase, 'lost'); assert.equal(g.round.reason, 'hint');
-  assert.equal(g.round.fixed.length, 2); assert.equal(g.progress.results[0], undefined);
+  assert.equal(g.round.fixed.length, g.round.freeHints + 2); assert.equal(g.progress.results[0], undefined);
 });
 test('mixed mistakes and hints use the same lives; shuffle and backspace are free', () => {
   const { game: g } = setup(); g.begin(); wrong(g); g.hint();
@@ -69,27 +69,30 @@ test('mixed mistakes and hints use the same lives; shuffle and backspace are fre
   g.hint(); assert.equal(g.round.phase, 'lost');
 });
 test('deadline boundary wins just before timeout and rejects answer at timeout', () => {
-  const t = setup('hard'); t.game.begin(); t.advance(9999); solve(t.game); assert.equal(t.game.round.phase, 'won');
-  const late = setup('medium'); late.game.begin(); late.advance(20000); const tile = late.game.round.tiles[0].id;
+  const t = setup('hard'); t.game.begin(); t.advance(11999); solve(t.game); assert.equal(t.game.round.phase, 'won');
+  const late = setup('medium'); late.game.begin(); late.advance(24000); const tile = late.game.round.tiles[0].id;
   assert.equal(late.game.select(tile), false); assert.equal(late.game.round.phase, 'lost'); assert.equal(late.game.round.reason, 'time');
 });
 test('refresh retains exact deadline, tiles, fixed letters and stars', () => {
   const t = setup(); t.game.begin(); t.game.hint(); t.game.shuffle(); t.advance(5000);
   const snapshot = JSON.parse(JSON.stringify(t.game.round)), r = t.reload();
-  assert.deepEqual(r.round, snapshot); assert.equal(r.remaining(), 15000);
-  t.advance(15000); const expired = t.reload(); assert.equal(expired.round.phase, 'lost'); assert.equal(expired.current, 0);
-  expired.begin(); assert.notEqual(expired.round.word, snapshot.word); assert.equal(expired.remaining(), 20000);
+  assert.deepEqual(r.round, snapshot); assert.equal(r.remaining(), 19000);
+  t.advance(19000); const expired = t.reload(); assert.equal(expired.round.phase, 'lost'); assert.equal(expired.current, 0);
+  expired.begin(); assert.notEqual(expired.round.word, snapshot.word); assert.equal(expired.remaining(), 24000);
 });
 test('leaving a tab or switching mode does not pause the clock; modes keep separate progression', () => {
   const t = setup(); t.game.begin(); const word = t.game.round.word;
   t.game.setMode('easy'); t.game.begin(); solve(t.game); assert.equal(t.game.unlocked, 1);
-  t.advance(21000); t.game.setMode('medium'); assert.equal(t.game.round.word, word);
+  t.advance(25000); t.game.setMode('medium'); assert.equal(t.game.round.word, word);
   assert.equal(t.game.round.phase, 'lost'); assert.equal(t.game.unlocked, 0);
 });
 test('every mode can finish all 60 levels and the final level cannot overflow', () => {
   for (const mode of Object.keys(MODES)) {
     const { game: g } = setup(mode); g.begin();
     for (let i = 0; i < 60; i++) {
+      assert.equal(g.round.freeHints, Math.max(1, Math.round(splitWord(g.round.word).length * .2)));
+      assert.equal(g.round.fixed.length, g.round.freeHints);
+      assert.equal(g.round.lives, 3); assert.equal(g.round.hints, 0);
       assert.equal(g.current, i); assert.equal(g.setLevel(i + 1), false);
       solve(g); assert.equal(g.round.phase, 'won'); assert.equal(g.unlocked, Math.min(i + 1, 59));
       if (i < 59) assert.equal(g.next(), true);
@@ -113,7 +116,7 @@ test('retry draws all 48 words in a band before recycling and never repeats imme
 test('restoring failed rounds does not grant a free new attempt or reset timeout', () => {
   for (const reason of ['time', 'hint', 'stars', 'abandoned']) {
     const t = setup(); t.game.begin();
-    if (reason === 'time') { t.advance(20001); t.game.tick(); }
+    if (reason === 'time') { t.advance(24001); t.game.tick(); }
     if (reason === 'hint') { t.game.hint(); t.game.hint(); t.game.hint(); }
     if (reason === 'stars') { wrong(t.game); wrong(t.game); wrong(t.game); }
     if (reason === 'abandoned') t.game.abandon();
@@ -142,4 +145,30 @@ test('all word digraphs and repeated letters can be consumed exactly once', () =
   for (const w of WORDS) assert.equal(splitWord(w.word).join(''), w.word);
   assert.deepEqual(splitWord('KNJIŽEVNOST'), ['K', 'NJ', 'I', 'Ž', 'E', 'V', 'N', 'O', 'S', 'T']);
   assert.deepEqual(splitWord('DŽEMPER'), ['DŽ', 'E', 'M', 'P', 'E', 'R']);
+});
+test('free starting letters survive editing and refresh without spending stars', () => {
+  const t = setup(), g = t.game; g.begin();
+  const slots = [...g.round.slots];
+  for (const i of g.round.fixed) assert.equal(g.remove(i), false);
+  g.clear(); g.undo(); g.shuffle();
+  assert.deepEqual(g.round.slots, slots); assert.equal(g.round.lives, 3); assert.equal(g.round.hints, 0);
+  assert.deepEqual(t.reload().round, g.round);
+});
+test('previous saved rounds without free letters retain progress and deadline', () => {
+  const t = setup(); t.game.begin();
+  const r = t.game.round;
+  delete r.freeHints; r.fixed = []; r.slots.fill(null); r.deadline -= 4000;
+  t.game.hint(); const snapshot = JSON.parse(JSON.stringify(r));
+  assert.deepEqual(t.reload().round, snapshot);
+});
+test('every word has concise descriptive help, with shorter clues on hard', () => {
+  for (const w of WORDS) {
+    assert(w.description && w.description.split(' ').length <= 6);
+    assert(!w.description.toLocaleUpperCase('bs').includes(w.word));
+  }
+  for (const mode of Object.keys(MODES)) {
+    const { game: g } = setup(mode); g.begin();
+    const w = WORDS.find(w => w.word === g.round.word);
+    assert.equal(g.view().clue, mode === 'hard' ? w.clue : w.description);
+  }
 });

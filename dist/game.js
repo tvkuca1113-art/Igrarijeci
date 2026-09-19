@@ -127,11 +127,11 @@ function render() {
   $('round-stars').setAttribute('aria-label', 'Preostale zvjezdice: ' + lives + ' od 3');
   $('ready-panel').hidden = !!r;
   $('board').hidden = !r;
-  $('category').textContent = !r ? CHAPTERS[Math.floor(v.current / 10)].toLocaleUpperCase('bs') : v.mode === 'hard' ? 'BEZ TRAGA' : v.category.toLocaleUpperCase('bs');
+  $('category').textContent = !r ? CHAPTERS[Math.floor(v.current / 10)].toLocaleUpperCase('bs') : v.category.toLocaleUpperCase('bs');
   $('question').textContent = !r ? 'Spreman za izazov?' : 'Koju riječ tražimo?';
-  $('clue').textContent = r && v.mode === 'easy' ? v.clue : '';
-  $('clue').hidden = !r || v.mode !== 'easy';
-  $('ready-copy').textContent = v.mode === 'easy' ? 'Tri zvjezdice. Bez odbrojavanja. Samo kratak trag.' : 'Tri zvjezdice. ' + v.config.seconds + ' sekundi. Vrijeme kreće na tvoj znak.';
+  $('clue').textContent = r ? v.clue : '';
+  $('clue').hidden = !r;
+  $('ready-copy').textContent = v.mode === 'easy' ? 'Tri zvjezdice. Bez odbrojavanja. Trag i besplatna početna slova.' : 'Tri zvjezdice. ' + v.config.seconds + (v.config.seconds === 24 ? ' sekunde.' : ' sekundi.') + ' Početna slova su besplatna. Sat kreće na tvoj znak.';
   $('start').innerHTML = 'Pokreni nivo' + (v.config.seconds ? ' · ' + v.config.seconds + ' s' : '') + ' ' + icon('arrow');
   $('game').classList.toggle('solved', phase === 'won');
   $('game').classList.toggle('lost', phase === 'lost');
@@ -262,9 +262,9 @@ if (document.modelContext?.registerTool) {
       return { mode: v.mode, level: v.current + 1, phase: v.round?.phase || 'ready', lives: v.round?.lives ?? 3,
         remainingSeconds: v.remaining === null ? null : Math.ceil(v.remaining / 1000),
         tiles: v.round?.tiles.map(t => ({ ...t, used: v.round.slots.includes(t.id) })) || [],
-        category: v.mode === 'hard' ? null : v.category, clue: v.mode === 'easy' ? v.clue : null };
+        category: v.round ? v.category : null, clue: v.round ? v.clue : null };
     } },
-    { name: 'start_word_game_round', description: 'Start a ready or failed level. Draws a new word and starts the 20- or 10-second clock in timed modes.', inputSchema: { type: 'object', properties: {}, additionalProperties: false }, annotations: { readOnlyHint: false }, execute: () => {
+    { name: 'start_word_game_round', description: 'Start a ready or failed level. Draws a new word and starts the 24- or 12-second clock in timed modes.', inputSchema: { type: 'object', properties: {}, additionalProperties: false }, annotations: { readOnlyHint: false }, execute: () => {
       if (game.round && game.round.phase !== 'lost') throw new Error('Nivo nije spreman za novi pokušaj.');
       start(); return { started: true, level: game.current + 1, mode: game.mode };
     } },
